@@ -74,18 +74,31 @@ function fitData(data, typ) {
 		y = [],
 		ypred = [];
 
-	for (i = 0; i < data.length; i++) {
+	for (var i = 0; i < data.length; i++) {
 		if (data[i] != null && data[i][0] != null && data[i][1] != null) {
 			x.push(data[i][0]);
 			y.push(data[i][1]);
 		}
 	}
 
-	if (type == 'linear') {
-		ret = linearRegression(x, y);
+	if (type == 'linear' || type == 'category') {
+		if (type == 'category') {
+			var categories = x;
+			x = [];
+			for (var n = 0, l = categories.length; n < l; ++n) {
+				x.push(n);
+			}
+		}
+
+		ret = linearRegression(x, y, type);
+
 		for (var i = 0; i < x.length; i++) {
 			res = ret[0] * x[i] + ret[1];
-			ypred.push([x[i], res]);
+			if (type == 'category') {
+				ypred.push([categories[i], res]);
+			} else  {
+				ypred.push([x[i], res]);
+			}
 		}
 	} else if (type == 'exp' || type == 'exponential') {
 		ret = expRegression(x, y);
